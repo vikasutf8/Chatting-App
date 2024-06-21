@@ -1,16 +1,28 @@
-import { AppBar, Box, Icon, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
-import React from 'react'
+import React, { Suspense, lazy, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { AppBar, Backdrop, Box, Icon, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
+import { Menu as MenuIcon, Search as SearchIcon, Add as AddIcon, Group as GroupIcon,Logout as LogoutIcon, Notifications as NotificationsIcon } from '@mui/icons-material/'
 import { orange } from '../../constants/color'
-import {useNavigate} from 'react-router-dom'
-import { Menu as MenuIcon, Search as SearchIcon, Add as AddIcon, Group as GroupIcon} from '@mui/icons-material/'
-const Header = () => {
-  const navigate =useNavigate();
-  const handleMobile = () => {
 
-  }
-  const operSearchDialog = () => { }
-  const openNewGroup = () => { }
+const SearchDialog =lazy(() => import('../specific/Search'))
+const NewGroupsDialog = lazy(() => import('../specific/NewGroups'))
+const NotificationsDialog = lazy(() => import('../specific/Notifications'))
+
+
+
+
+const Header = () => {
+  const [ismobile , setIsMobile] = useState(false)
+  const [isSearch, setIsSearch] = useState(false)
+  const [isNewGroup, setIsNewGroup] = useState(false)
+  const [isNotification, setIsNotification] = useState(false)
+  const navigate = useNavigate();
+  const handleMobile = () => { setIsMobile(prev => !prev) }
+  const openSearch = () => { setIsSearch(prev => !prev)}
+  const openNewGroup = () => { setIsNewGroup(prev => !prev)}
+  const openNotification = () => { setIsNotification(prev => !prev)}
   const navigateToGroup = () => navigate("/groups")
+  const logoutHandler = () => navigate("/login")
   return (
     <>
       <Box sx={{ flexGrow: 1 }} height={"4rem"}>
@@ -18,44 +30,61 @@ const Header = () => {
           bgcolor: orange,
         }}>
           <Toolbar>
-
-
             <Typography variant="h6"
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-              }}>
+              sx={{ display: { xs: 'none', sm: 'block' },}}>
               Chatt App
             </Typography>
-            <Box sx={{
-              display: { xs: 'block', sm: 'none' },
-
-            }}>
+            <Box sx={{ display: { xs: 'block', sm: 'none' },}}>  
               <IconButton color="inherit" onClick={handleMobile}>
                 <MenuIcon />
               </IconButton>
             </Box>
             <Box sx={{ flexGrow: 1 }} />
             <Box >
-              <Tooltip title="Search Icon">
-                <IconButton color="inherit" size="large" onClick={operSearchDialog}>
-                  <SearchIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="New Group">
-                <IconButton color="inherit" size="large" onClick={openNewGroup}>
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Manage Groups">
-              <IconButton color="inherit" size="large" onClick={navigateToGroup}>
-                 <GroupIcon />
-                </IconButton>
-              </Tooltip>
+              <IconBtn title="Search Icon" icon={<SearchIcon />} onClick={openSearch} />
+              <IconBtn title="New Group" icon={<AddIcon />} onClick={openNewGroup} />
+              <IconBtn title="Manage Groups" icon={<GroupIcon />} onClick={navigateToGroup} />
+              <IconBtn title="Notification" icon={<NotificationsIcon />} onClick={openNotification} />
+              <IconBtn title="Logout" icon={< LogoutIcon />} onClick={logoutHandler} />
             </Box>
           </Toolbar>
         </AppBar>
       </Box>
+
+      {
+        isSearch && (
+          <Suspense fallback={<Backdrop open />}>
+            <SearchDialog  />
+          </Suspense>
+        )
+       } 
+      {
+        isNotification && (
+          <Suspense fallback={<Backdrop open />}>
+            <NotificationsDialog  />
+          </Suspense>
+        )
+       } 
+       {
+        isNewGroup && (
+          <Suspense fallback={<Backdrop open />}>
+            <NewGroupsDialog  />
+          </Suspense>
+        )
+       } 
     </>
+  )
+}
+
+
+// create component that for icons
+const IconBtn = ({ title, icon, onClick }) => {
+  return (
+    <Tooltip title={title}>
+      <IconButton color="inherit" size="large" onClick={onClick}>
+        {icon}
+      </IconButton>
+    </Tooltip>
   )
 }
 
