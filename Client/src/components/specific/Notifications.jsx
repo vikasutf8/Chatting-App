@@ -10,9 +10,9 @@ const Notifications = () => {
 
   return (
     <Dialog open>
-    <Stack p={{ xs: "1rem", sm: "2rem" }} maxWidth={"20rem"}>
+    <Stack p={{ xs: "1rem", sm: "2rem" }} maxWidth={"30rem"}>
       <DialogTitle>Notifications</DialogTitle>
-    </Stack>
+   
     {
       sampleNotifications.length > 0 ? (
         sampleNotifications.map((i) => <NotificationItem
@@ -25,6 +25,7 @@ const Notifications = () => {
         <Typography textAlign={"center"}> 0 notifications</Typography>
       )
     }
+     </Stack>
   </Dialog>
   )
 }
@@ -56,7 +57,7 @@ const NotificationItem = memo(({ sender, _id, handler }) => {
           {`${name} sent you friend request. `}</Typography>
         <Stack direction={{
           xs: "column",
-
+          sm: "row"
         }}
         >
           <Button color="success" onClick={() => handler({ _id, accept: true })}>
