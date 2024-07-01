@@ -25,7 +25,7 @@ export const samepleChats = [
       name: "John Boi",
       _id: "2",
       groupChat: true,
-      members: ["1", "2"],
+      members: ["1"],
     },
   ];
 
