@@ -5,9 +5,19 @@ import { InputBox } from '../components/styles/styledComponents'
 import { IconButton, Stack } from '@mui/material'
 import { grayColor, orange } from '../constants/color'
 import FileMenu from '../components/dialogs/FileMenu'
+import { sampleMessage } from '../constants/sampleData'
+import MessagaComponent from '../components/shared/MessagaComponent'
+
+const user = {
+  _id: "sdfsdfsdf",
+  name: "User",
+  
+}
+
 
 const Chat = () => {
   const containerRef = useRef(null)
+ 
   return (
     <>
        <Stack
@@ -29,6 +39,11 @@ const Chat = () => {
         {userTyping && <TypingLoader />}
 
         <div ref={bottomRef} /> */}
+        {
+          sampleMessage.map((message) => (
+            <MessagaComponent key={message._id} message={message} user={user} />
+          )
+       ) }
       </Stack>
 
       <form
@@ -51,6 +66,7 @@ const Chat = () => {
               rotate: "30deg",
             }}
             // onClick={handleFileOpen}
+           
           >
             <AttachFileIcon />
           </IconButton>
@@ -79,7 +95,7 @@ const Chat = () => {
         </Stack>
       </form>
 
-      <FileMenu />
+      <FileMenu   />
     </>
   )
 }

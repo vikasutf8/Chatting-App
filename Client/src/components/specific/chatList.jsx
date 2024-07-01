@@ -23,6 +23,7 @@ const chatList = ({
                     const newMessageAlert = newMessagesAlert.find(({ chatId }) => chatId === _id)
                     const isOnline = members?.some((member) => onlineUsers.includes(_id))
                     return <ChatItem
+                        key={_id}
                         index={index}
                         newMassageAlert={newMessageAlert}
                         isOnline={isOnline}
