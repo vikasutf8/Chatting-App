@@ -1,0 +1,50 @@
+entity-relationship-diagram
+
+users [icon: user, color: blue] {
+  id string pk
+  Name string
+  Username string 
+  Bio string
+  Password string
+  Avatar object
+//   Friend Array
+}
+
+Avatar[color : white]{
+  id String pk
+  Public_id string 
+  url cloudinary
+}
+
+chat [icon: Chat, color: red] {
+  id string pk
+  Name string
+  IsGroupChat boolean
+  Creater string
+  Members string 
+}
+Message [icon:message ,color: green]{
+  content  string
+  Sender  string
+  Chat string 
+  Attachments
+}
+
+Request[icon :request ,color: orange]{
+Status ENUM
+Sender string
+Reciver string
+}
+
+users.Avatar  <> Avatar 
+chat.Members > users.id
+Message.Sender  - users.id
+Message.Chat - chat.id
+Request.Sender -users.id
+Request.Reciver -users.id
+
+
+
+ 
+
+>
