@@ -20,30 +20,39 @@ const AddMemberDialog = lazy(() =>
   import("../components/dialogs/AddMemberDialog")
 );
 const Groups = () => {
-  const isAddMember =false;
+  const isAddMember =true;  //redux
   const chatId = useSearchParams()[0].get("group")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
   const [groupName, setGroupName] = useState("")
   const [groupNameUpdatedValue, setGroupNameUpdatedValue] = useState("")
-  const [isLoadingGroupName, setIsLoadingGroupName] = useState(true)
+  // const [isLoadingGroupName, setIsLoadingGroupName] = useState(true)
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false)
   const navigate = useNavigate()
 
   const handleMobile = () => { setIsMobileMenuOpen((prev) => !prev) };
   const handleMobileClose = () => setIsMobileMenuOpen(false)
   const navigateBack = () => { navigate("/") }
+
   const updateGroupName = () => {
     setIsEdit(false)
     console.log(groupNameUpdatedValue)
   }
   const openConfirmDeleteHandler = () => {
+    setConfirmDeleteDialog(true)
+    console.log("Delete Group") 
+  }
+  const closeConfirmDeleteHandler = () => { 
     setConfirmDeleteDialog(false)
-    console.log("Delete Group") }
-  const closeConfirmDeleteHandler = () => { setConfirmDeleteDialog(false) }
-  const openAddMemberHandler = () => { console.log("Add Member") }
+   }
+  const openAddMemberHandler = () => { 
+    console.log("Add Member") 
+  }
 
-    const deleteHandler = () => {}
+  const deleteHandler = () => {
+    console.log("Delete Handlers")
+    closeConfirmDeleteHandler()
+  }
 
   const GroupName = (
     <Stack
@@ -222,6 +231,19 @@ const Groups = () => {
           )
         }
       </Grid>
+
+
+    {
+      isAddMember && (
+        <Suspense fallback={<Backdrop open />}>
+        <AddMemberDialog
+          open={isAddMember}
+          handleClose={openAddMemberHandler}
+          deleteHandler={deleteHandler}
+        />
+      </Suspense>
+      )
+    }
 
     {
       confirmDeleteDialog && (
