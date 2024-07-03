@@ -12,15 +12,16 @@ import {
 
 import {bgGradient} from '../../constants/color';
 import { useInputValidation } from '6pp';
+import { Navigate } from 'react-router-dom';
 
-
+const isAdmin =true;
 const AdminLogin = () => {
   const secretKey = useInputValidation("")
   const submitHandler = (e) => {
     e.preventDefault();
     console.log("submitting");
   }
-
+if(isAdmin) return <Navigate to="/admin/dashboard" />
   return (
     <div
       style={{
