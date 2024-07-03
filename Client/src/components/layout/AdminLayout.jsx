@@ -10,7 +10,7 @@ import {
 import { Box, Drawer, Grid, IconButton, Stack, Typography, styled } from '@mui/material'
 import React, { useState } from 'react'
 import { grayColor, matBlack } from '../../constants/color'
-import { useLocation, Link as LinkComponent } from 'react-router-dom'
+import { useLocation, Link as LinkComponent, Navigate } from 'react-router-dom'
 
 const Link = styled(LinkComponent)`
  text-decoration: none;
@@ -47,6 +47,8 @@ const adminTabs = [
         icon: <MessageIcon />,
     },
 ];
+
+const isAdmin =true;
 
 const Sidebar = ({ w }) => {
     const location = useLocation()
@@ -96,6 +98,8 @@ const AdminLayout = ({ children }) => {
     const handleClose = () => {
         setIsMobile(false)
     }
+
+    if (!isAdmin) return <Navigate to="/Admin" />
     return (
         <Grid container minHeight={"100vh"}>
             <Box
