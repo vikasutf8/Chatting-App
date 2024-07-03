@@ -4,8 +4,8 @@ import { Add as AddIcon, Remove as RemoveIcon } from "@mui/icons-material";
 
 
 
-const UserItem = ({user ,handler ,handlerIsLoading ,isAdded=false}) => {
-  const {name,_id,avatar,styling ={}} = user
+const UserItem = ({user ,handler ,handlerIsLoading ,isAdded=false,styling ={}}) => {
+  const {name,_id,avatar} = user
     return (
     <ListItem>
         <Stack

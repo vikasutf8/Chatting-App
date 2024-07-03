@@ -12,7 +12,8 @@ import {
 import { bgGradient, matBlack } from '../constants/color.js'
 import { Link } from '../components/styles/styledComponents'
 import AvatarCard from "../components/shared/AvatarCard";
-import { samepleChats } from "../constants/sampleData.js";
+import { samepleChats, sampleUsers } from "../constants/sampleData.js";
+import UserItem from '../components/shared/UserItem.jsx'
 const ConfirmDeleteDialog = lazy(() =>
   import("../components/dialogs/ConfirmDeleteDialog")
 );
@@ -20,7 +21,7 @@ const AddMemberDialog = lazy(() =>
   import("../components/dialogs/AddMemberDialog")
 );
 const Groups = () => {
-  const isAddMember =true;  //redux
+  const isAddMember =false;  //redux
   const chatId = useSearchParams()[0].get("group")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
@@ -53,6 +54,11 @@ const Groups = () => {
     console.log("Delete Handlers")
     closeConfirmDeleteHandler()
   }
+
+  const removeMemberHandler = (_id) => { 
+    console.log("Remove Member")
+  }
+
 
   const GroupName = (
     <Stack
@@ -89,9 +95,11 @@ const Groups = () => {
   );
 
   useEffect(() => {
+   if(chatId){
     setGroupName(`Group Name ${chatId}`)
     setGroupNameUpdatedValue(`Group Name ${chatId}`)
 
+   }
     // setcleaner function
     return () => {
       setGroupName("")
@@ -223,8 +231,22 @@ const Groups = () => {
                 height={"50vh"}
                 overflow={"auto"}
               >
-                {/* members */}
-
+                {
+                    sampleUsers.map((i) => (
+                      <UserItem
+                        user={i}
+                        key={i._id}
+                        isAdded
+                        styling={{
+                          boxShadow: "0 0 0.5rem  rgba(0,0,0,0.2)",
+                          padding: "1rem 2rem",
+                          borderRadius: "1rem",
+                        }}
+                        handler={removeMemberHandler}
+                      />
+                    ))
+                }
+                
               </Stack>
               {ButtonGroup}
             </>
