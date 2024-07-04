@@ -120,7 +120,7 @@ export const samepleChats = [
   
     chats: [
       {
-        name: "LabadBass Group",
+        name: " Group chat  1",
         avatar: ["https://www.w3schools.com/howto/img_avatar.png"],
         _id: "1",
         groupChat: false,
@@ -136,7 +136,7 @@ export const samepleChats = [
         },
       },
       {
-        name: "L*Da Luston Group",
+        name: " Group chat 2",
         avatar: ["https://www.w3schools.com/howto/img_avatar.png"],
         _id: "2",
         groupChat: true,
@@ -156,8 +156,8 @@ export const samepleChats = [
     messages: [
       {
         attachments: [],
-        content: "L*uda ka Message hai",
-        _id: "sfnsdjkfsdnfkjsbnd",
+        content: " Message hai",
+        _id: "helolow 221",
         sender: {
           avatar: "https://www.w3schools.com/howto/img_avatar.png",
           name: "Chaman ",
@@ -175,10 +175,10 @@ export const samepleChats = [
           },
         ],
         content: "",
-        _id: "sfnsdjkfsdnfkdddjsbnd",
+        _id: "helloow111",
         sender: {
           avatar: "https://www.w3schools.com/howto/img_avatar.png",
-          name: "Chaman  2",
+          name: "hey  2",
         },
         chat: "chatId",
         groupChat: true,
