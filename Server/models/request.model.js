@@ -1,5 +1,4 @@
-import { Schema,model, models } from "mongoose";
-
+import mongoose,{ Schema,model} from "mongoose";
 const schema =new Schema({
         status:{
             type:String,
@@ -24,4 +23,4 @@ const schema =new Schema({
 )
 
 
-export const Request = models.Request || model('Request',schema);
+export const Request = mongoose.models.Request || model('Request',schema);
