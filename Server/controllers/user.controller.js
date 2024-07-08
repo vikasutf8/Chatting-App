@@ -49,7 +49,16 @@ const login = TryCatch(async (req, res, next) => {
 
 
 
-const getMyProfile = TryCatch(async (req, res, next) => {});
+const getMyProfile = TryCatch(async (req, res, next) => {
+
+
+    const Myprofile = await User.findById(req.user);
+
+    res.status(200).json({
+      success: true,
+      data: req.user,
+    });
+});
 
 
 
