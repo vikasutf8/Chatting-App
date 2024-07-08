@@ -1,6 +1,7 @@
 
-import { TryCatch } from "../middlewares/error.js";
+
 import  jwt  from "jsonwebtoken";
+import { ErrorHandler } from "../utils/utility.js";
 
 // to access my profile mean id -> (req.user) via userDB se
 const  isAuthenticated = (req, res, next) => {

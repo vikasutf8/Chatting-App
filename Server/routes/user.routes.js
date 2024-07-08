@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { getMyProfile, login, newUser, } from '../controllers/user.controller.js';
+import { getMyProfile, login, logout, newUser, } from '../controllers/user.controller.js';
 import { singleAvatar } from '../middlewares/multer.js';
 import { isAuthenticated } from '../middlewares/auth.js';
 const router = express.Router();
@@ -11,5 +11,7 @@ router.post('/login',login);
 
 
 // below routes access only by authenticated users
-router.get("/me",isAuthenticated,getMyProfile);
+router.use(isAuthenticated)
+router.get("/me",getMyProfile);
+router.get("/logout",logout);
 export default router;

@@ -1,7 +1,7 @@
 import {compare} from "bcrypt";
 import { TryCatch } from "../middlewares/error.js";
 import { User } from "../models/user.model.js";
-import { sendToken } from "../utils/feature.js";
+import { cookieOptions, sendToken } from "../utils/feature.js";
 import { ErrorHandler } from "../utils/utility.js";
 
 // crate a new user and save to the database and send a token
@@ -50,8 +50,6 @@ const login = TryCatch(async (req, res, next) => {
 
 
 const getMyProfile = TryCatch(async (req, res, next) => {
-
-
     const Myprofile = await User.findById(req.user);
 
     res.status(200).json({
@@ -60,6 +58,17 @@ const getMyProfile = TryCatch(async (req, res, next) => {
     });
 });
 
+const logout = TryCatch(async (req, res, next) => {
+
+    return res
+    .status(200)
+    .cookie("ChatApp-token", " ", {...cookieOptions, maxAge: 0})
+    .json({
+      success: true,
+      message:"Logged out successfully"
+    });
+});
 
 
-export { login, newUser, getMyProfile };
+
+export { login, newUser, getMyProfile,logout };
