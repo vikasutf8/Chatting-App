@@ -110,8 +110,11 @@ const addMembers =TryCatch(async (req, res, next) => {
     // accessing User model -promise eka sath le lege
     const allNewMembersPromise =members.map((i)=>User.findById(i,"name"));
     const allNewMembers = await Promise.all(allNewMembersPromise);
+// only added unique members
+    const uniqueMembers = allNewMembers.filter((i)=>!chat.members.includes(i._id))
+    .map((i)=>i._id);
 
-    chat.members.push(...allNewMembers.map((i)=>i._id));  //only ids
+    chat.members.push(...uniqueMembers);  //only ids
     // lenght of group
     if(chat.members.length > 249){
         return next(new ErrorHandler(`Members limit exceeded ${chat.members.length} `, 400));
@@ -132,5 +135,7 @@ const addMembers =TryCatch(async (req, res, next) => {
         message: "Members added successfully",
     });
 })
+
+
 
 export { newGroupChat,getMyChats ,getMyGroups, addMembers};
