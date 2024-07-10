@@ -12,7 +12,7 @@ router.get('/my', getMyChats);
 router.get('/my/groups', getMyGroups);
 router.put('/addmembers',addMembers)
 router.put("/removemember",removeMember)
-router.delete("/leave/:id",leaveGroup)
+router.delete("/leave/:_id",leaveGroup)
 
 // send Attachment
 // get message
