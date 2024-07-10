@@ -1,6 +1,7 @@
 import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
 import {Chat} from "../models/chat.model.js";
+import {User} from "../models/user.model.js";
 import { emitEvent } from "../utils/feature.js";
 import { ALERT, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
@@ -86,4 +87,50 @@ const getMyGroups =TryCatch(async (req, res, next) => {
 
 })
 
-export { newGroupChat,getMyChats ,getMyGroups};
+
+const addMembers =TryCatch(async (req, res, next) => {
+    const { chatId, members } = req.body;
+
+    if(!members || members.length === 0){
+        return next(new ErrorHandler("Please provide members", 400));
+    }
+
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+        return next(new ErrorHandler("Chat not found", 404));
+    }
+    if(!chat.groupChat){
+        return next(new ErrorHandler("This is not a group chat", 400));
+    }
+    if(chat.creator.toString() !== req.user.toString()){   
+        return next(new ErrorHandler("You are not authorized to add members", 403));
+    }
+
+
+    // accessing User model -promise eka sath le lege
+    const allNewMembersPromise =members.map((i)=>User.findById(i,"name"));
+    const allNewMembers = await Promise.all(allNewMembersPromise);
+
+    chat.members.push(...allNewMembers.map((i)=>i._id));  //only ids
+    // lenght of group
+    if(chat.members.length > 249){
+        return next(new ErrorHandler(`Members limit exceeded ${chat.members.length} `, 400));
+    }
+
+    await chat.save();
+
+    const allUsersName =allNewMembers.map((i)=>i.name).join(", "); //string format
+
+    emitEvent(req,
+        ALERT,
+        chat.members,
+        `${allUsersName} added to the group chat ${chat.name}`)
+    emitEvent(req,REFETCH_CHATS,members) 
+
+    return res.status(200).json({
+        success: true,
+        message: "Members added successfully",
+    });
+})
+
+export { newGroupChat,getMyChats ,getMyGroups, addMembers};
