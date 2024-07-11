@@ -2,7 +2,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { Chat } from "../models/chat.model.js";
 import { User } from "../models/user.model.js";
-import { emitEvent } from "../utils/feature.js";
+import { deleteFileFromCloudinary, emitEvent } from "../utils/feature.js";
 import {
   ALERT,
   NEW_ATTACHMENT,
@@ -287,11 +287,9 @@ const sendAttachments = TryCatch(async (req, res, next) => {
 
 const getChatDetail = TryCatch(async (req, res, next) => {
   if (req.query.populate === "true") {
-    const chat = await Chat.findById(req.params._id).populate(
-      "members",
-      "name avatar"
-    )
-    .lean();
+    const chat = await Chat.findById(req.params._id)
+      .populate("members", "name avatar")
+      .lean();
     if (!chat) return next(new ErrorHandler("Chat not found", 404));
 
     chat.members = chat.members.map(({ _id, name, avatar }) => ({
@@ -315,24 +313,73 @@ const getChatDetail = TryCatch(async (req, res, next) => {
 });
 
 const renameGroup = TryCatch(async (req, res, next) => {
- const chatId = req.params._id;
- const { name } = req.body;
+  const chatId = req.params._id;
+  const { name } = req.body;
 
   const chat = await Chat.findById(chatId);
-  if(!chat) return next(new ErrorHandler("Chat not found", 404));
-  if(!chat.groupChat) return next(new ErrorHandler("This is not a group chat", 400));
-  if(chat.creator.toString() !== req.user.toString()) return next(new ErrorHandler("You are not authorized to rename the group", 403));
+  if (!chat) return next(new ErrorHandler("Chat not found", 404));
+  if (!chat.groupChat)
+    return next(new ErrorHandler("This is not a group chat", 400));
+  if (chat.creator.toString() !== req.user.toString())
+    return next(
+      new ErrorHandler("You are not authorized to rename the group", 403)
+    );
 
-  chat.name=  name
+  chat.name = name;
   await chat.save();
 
-  emitEvent(req,REFETCH_CHATS,chat.members);
+  emitEvent(req, REFETCH_CHATS, chat.members);
   return res.status(200).json({
-    success:true,
-    message:"Group renamed successfully",
-    chat
+    success: true,
+    message: "Group renamed successfully",
+    chat,
   });
 });
+
+const deleteChat = TryCatch(async (req, res, next) => {
+  const chatId = req.params._id;
+
+  const chat = await Chat.findById(chatId);
+  if (!chat) return next(new ErrorHandler("Chat not found", 404));
+  const members = chat.members;
+  if(chat.groupChat){
+    if (chat.creator.toString() !== req.user.toString())
+      return next(
+        new ErrorHandler("You are not authorized to delete the group", 403)
+      );
+  }
+
+  if(!chat.groupChat && !chat.members.includes(req.user.toString())) {
+    return next(new ErrorHandler("You are not authorized to delete the chat", 403))
+  }
+
+  // delete chat
+  // delete messages  also delete attachments from cloudinary
+  const messagesWithAttachments = await Message.find({
+    Chat: chatId,
+    attachment: { $exists: true , $ne: []},
+  });
+  const public_ids =[];
+
+  messagesWithAttachments.forEach(({attachment}) => 
+    attachment.forEach(({public_id}) => 
+      public_ids.push(public_id))
+  )
+
+  await Promise.all([
+    // delete files from cloudinary
+    deleteFileFromCloudinary(public_ids),
+    chat.deleteOne(),
+    Message.deleteMany({Chat: chatId}),
+  ]);
+
+  emitEvent(req, REFETCH_CHATS, members);
+
+  return res.status(200).json({
+    success: true,
+    message: "Chat deleted successfully",
+  });
+})
 
 export {
   newGroupChat,
@@ -344,4 +391,5 @@ export {
   sendAttachments,
   getChatDetail,
   renameGroup,
+  deleteChat,
 };
