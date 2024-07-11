@@ -1,14 +1,13 @@
-import express from 'express';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import express from 'express';
 
 
 
-import { connectDB } from './utils/feature.js';
 import { errorMiddleware } from './middlewares/error.js';
-import userRoutes from './routes/user.routes.js';
 import chatRoutes from './routes/chat.routes.js';
-import { createUser } from './seeders/user.js';
+import userRoutes from './routes/user.routes.js';
+import { connectDB } from './utils/feature.js';
 
 
 dotenv.config({
@@ -19,6 +18,9 @@ const port = process.env.PORT || 3000;
 connectDB(mongoURI);
 
 // createUser(10);
+// createSingleChats(10);
+// createGroupChats(10);
+// createMessagesInAChat("668fa8c74c8bd7ab68a7f0ec",50)
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
