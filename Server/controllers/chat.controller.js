@@ -14,12 +14,6 @@ import { ErrorHandler } from "../utils/utility.js";
 const newGroupChat = TryCatch(async (req, res, next) => {
   const { name, members } = req.body;
 
-  if (members.length < 2) {
-    return next(
-      new ErrorHandler("Group chat must have at least 2 members", 400)
-    );
-  }
-
   const allMembers = [...members, req.user];
   await Chat.create({
     name,
@@ -91,11 +85,6 @@ const getMyGroups = TryCatch(async (req, res, next) => {
 
 const addMembers = TryCatch(async (req, res, next) => {
   const { chatId, members } = req.body;
-
-  if (!members || members.length === 0) {
-    return next(new ErrorHandler("Please provide members", 400));
-  }
-
   const chat = await Chat.findById(chatId);
   if (!chat) {
     return next(new ErrorHandler("Chat not found", 404));
@@ -143,9 +132,7 @@ const addMembers = TryCatch(async (req, res, next) => {
 
 const removeMember = TryCatch(async (req, res, next) => {
   const { userId, chatId } = req.body;
-  if (!userId || !chatId) {
-    return next(new ErrorHandler("userId and chatId are required", 400));
-  }
+  
   const [chat, userThatWillBeRemoved] = await Promise.all([
     Chat.findById(chatId),
     User.findById(userId, "name"),
@@ -228,12 +215,6 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   const { chatId } = req.body;
 
   const files = req.files || [];
-
-  if (files.length < 1)
-    return next(new ErrorHandler("Please Upload Attachments", 400));
-
-  if (files.length > 5)
-    return next(new ErrorHandler("Files Can't be more than 5", 400));
 
   const [chat, me] = await Promise.all([
     Chat.findById(chatId),
