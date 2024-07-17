@@ -3,10 +3,11 @@ import express from 'express';
 import { getMyProfile, login, logout, newUser, searchUser, } from '../controllers/user.controller.js';
 import { singleAvatar } from '../middlewares/multer.js';
 import { isAuthenticated } from '../middlewares/auth.js';
+import { registerValidator, validateHandler } from '../lib/validators.js';
 const router = express.Router();
 
-
-router.post('/new',singleAvatar,newUser);
+// registerValidator() is a middleware that validates the request body and return array
+router.post('/new', singleAvatar,registerValidator(),validateHandler ,newUser);
 router.post('/login',login);
 
 

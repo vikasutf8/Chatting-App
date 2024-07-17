@@ -1,17 +1,15 @@
-import { TryCatch } from "../middlewares/error.js";
-import { ErrorHandler } from "../utils/utility.js";
-import { Chat } from "../models/chat.model.js";
-import { User } from "../models/user.model.js";
-import { deleteFileFromCloudinary, emitEvent } from "../utils/feature.js";
 import {
   ALERT,
-  NEW_ATTACHMENT,
   NEW_MESSAGE_ALERT,
-  REFETCH_CHATS,
+  REFETCH_CHATS
 } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
-import e from "express";
+import { TryCatch } from "../middlewares/error.js";
+import { Chat } from "../models/chat.model.js";
 import { Message } from "../models/message.model.js";
+import { User } from "../models/user.model.js";
+import { deleteFileFromCloudinary, emitEvent } from "../utils/feature.js";
+import { ErrorHandler } from "../utils/utility.js";
 
 const newGroupChat = TryCatch(async (req, res, next) => {
   const { name, members } = req.body;
@@ -411,15 +409,7 @@ return res.status(200).json({
 })
 
 export {
-  newGroupChat,
-  getMyChats,
-  getMyGroups,
-  addMembers,
-  removeMember,
-  leaveGroup,
-  sendAttachments,
-  getChatDetail,
-  renameGroup,
-  deleteChat,
-  getMessages,
+  addMembers, deleteChat, getChatDetail, getMessages, getMyChats,
+  getMyGroups, leaveGroup, newGroupChat, removeMember, renameGroup, sendAttachments
 };
+

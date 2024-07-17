@@ -30,8 +30,6 @@ const newUser = TryCatch(async (req, res, next) => {
   sendToken(res, user, 201, "User created successfully");
 });
 
-
-
 //   login a register user
 const login = TryCatch(async (req, res, next) => {
   const { username, password } = req.body;
@@ -45,9 +43,6 @@ const login = TryCatch(async (req, res, next) => {
 
   sendToken(res, userDB, 200, `Welcome Back, ${userDB.name}`);
 });
-
-
-
 
 const getMyProfile = TryCatch(async (req, res, next) => {
     const Myprofile = await User.findById(req.user);
