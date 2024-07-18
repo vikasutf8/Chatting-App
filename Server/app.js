@@ -8,7 +8,7 @@ import { errorMiddleware } from './middlewares/error.js';
 import chatRoutes from './routes/chat.routes.js';
 import userRoutes from './routes/user.routes.js';
 import { connectDB } from './utils/feature.js';
-
+import adminRoutes from './routes/admin.routes.js';
 
 dotenv.config({
     path:'./.env'
@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 app.use("/user",userRoutes);
 app.use("/chat",chatRoutes);
-
+app.use("/admin",adminRoutes);
 
 
 app.get('/', (req, res) => {  
