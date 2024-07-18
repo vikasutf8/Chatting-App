@@ -15,6 +15,7 @@ dotenv.config({
 });
 const mongoURI=process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
+export const adminSecretKey = process.env.ADMIN_SECRET_KEY || "Chat-App-Admin";
 connectDB(mongoURI);
 
 // createUser(10);
