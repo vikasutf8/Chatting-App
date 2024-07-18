@@ -10,10 +10,7 @@ const cookieOptions = {
 const connectDB = (uri) => {
   mongoose
     .connect(uri)
-
-    .then((data) =>
-      // console.log(data)
-      // `Connected to the database ${data.connection.host}`)
+    .then(() =>
       console.log("Connected to the database")
     )
     .catch((err) => {
@@ -32,15 +29,19 @@ const sendToken = (res, user, code, message) => {
   });
 };
 
-const emitEvent =(req,event,users,data)=>{
-console.log(
-  "Emitting event",event
-)
-}
+const emitEvent = (req, event, users, data) => {
+  console.log("Emitting event", event);
+};
 
 const deleteFileFromCloudinary = async (public_id) => {
   // const result = await cloudinary.uploader.destroy(public_id);
   // return result;
 };
 
-export { connectDB, sendToken,cookieOptions,emitEvent ,deleteFileFromCloudinary };
+export {
+  connectDB,
+  sendToken,
+  cookieOptions,
+  emitEvent,
+  deleteFileFromCloudinary,
+};

@@ -13,10 +13,11 @@ import adminRoutes from './routes/admin.routes.js';
 dotenv.config({
     path:'./.env'
 });
+export const envMode =process.env.NODE_ENV.trim() || "PRODUCTION";
 const mongoURI=process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
-export const adminSecretKey = process.env.ADMIN_SECRET_KEY || "Chat-App-Admin";
 connectDB(mongoURI);
+export const adminSecretKey = process.env.ADMIN_SECRET_KEY || "Chat-App-Admin";
 
 // createUser(10);
 // createSingleChats(10);
@@ -34,7 +35,7 @@ app.use("/admin",adminRoutes);
 
 
 app.get('/', (req, res) => {  
-    res.send(`Server is running on http://localhost:${port}`);
+    res.send(`Server is running on http://localhost:${port} in ${envMode} mode`);
 });
 
 

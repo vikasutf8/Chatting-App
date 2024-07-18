@@ -216,6 +216,11 @@ const sendAttachments = TryCatch(async (req, res, next) => {
 
   const files = req.files || [];
 
+  if (files.length < 1)
+    return next(new ErrorHandler("Please provide attachments", 400));
+  if(files.length > 5)
+    return next(new ErrorHandler("Attachments must be under limit", 400));
+
   const [chat, me] = await Promise.all([
     Chat.findById(chatId),
     User.findById(req.user, "name"),

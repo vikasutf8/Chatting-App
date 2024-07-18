@@ -1,4 +1,4 @@
-import { body, check, param, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 import { ErrorHandler } from "../utils/utility.js";
 
 
@@ -21,7 +21,7 @@ const registerValidator = () => [
   body("username", "Please fill username").notEmpty(),
   body("password", "Please fill password").notEmpty(),
   body("bio", "Please fill bio").notEmpty(),
-  check("avatar", "Please upload avatar").notEmpty(),
+  // check("avatar", "Please upload avatar").notEmpty(),
 ];
 const loginValidator = () => [
   body("username", "Please fill username").notEmpty(),
@@ -51,11 +51,11 @@ const removeMembersValidator = () => [
 ];
 const sendAttachmentsValidator = () => [
   body("chatId", "Please fill group Name/ID ").notEmpty(),
-  check("files")
-    .notEmpty()
-    .withMessage("Please Upload Attachments")
-    .isArray({ min: 1, max: 5 })
-    .withMessage("Attachments must be under limit"),
+  // check("files")
+  //   .notEmpty()
+  //   .withMessage("Please Upload Attachments")
+  //   .isArray({ min: 1, max: 5 })
+  //   .withMessage("Attachments must be under limit"),
 ];
 const chatIdValidor = () => [
   param("_id", "Please fill group Name/ID ").notEmpty(),
@@ -82,16 +82,8 @@ const adminValidator = () => [
 ]
 
 export {
-  registerValidator,
-  validateHandler,
-  loginValidator,
-  newGroupValidator,
-  addMembersValidator,
-  removeMembersValidator,
-  sendAttachmentsValidator,
-  chatIdValidor,
-  removeGroupValidator,
-  sendRequestValidator,
-  acceptRequestValidator,
-  adminValidator
+  acceptRequestValidator, addMembersValidator, adminValidator, chatIdValidor, loginValidator,
+  newGroupValidator, registerValidator, removeGroupValidator, removeMembersValidator,
+  sendAttachmentsValidator, sendRequestValidator, validateHandler
 };
+
