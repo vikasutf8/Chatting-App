@@ -1,6 +1,8 @@
 import { body, check, param, validationResult } from "express-validator";
 import { ErrorHandler } from "../utils/utility.js";
 
+
+
 const validateHandler = (req, res, next) => {
   const errors = validationResult(req);
   // console.log(errors)
@@ -75,6 +77,10 @@ const acceptRequestValidator = () => [
     .withMessage("Accept should be boolean"),
 ];
 
+const adminValidator = () => [
+  body("secretKey", "Please provide secretKey").notEmpty(),
+]
+
 export {
   registerValidator,
   validateHandler,
@@ -87,4 +93,5 @@ export {
   removeGroupValidator,
   sendRequestValidator,
   acceptRequestValidator,
+  adminValidator
 };

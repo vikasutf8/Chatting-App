@@ -2,6 +2,33 @@ import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.model.js";
 import { Message } from "../models/message.model.js";
 import { User } from "../models/user.model.js";
+import jwt from "jsonwebtoken"
+import { cookieOptions } from "../utils/feature.js";
+import { ErrorHandler } from "../utils/utility.js";
+
+
+const adminLogin = TryCatch(async (req, res,next) => {
+    const { secretKey } = req.body;
+    const adminSecretKey = process.env.ADMIN_SECRET_KEY || "Chat-App-Admin";
+    const isMatched = secretKey === adminSecretKey;
+  
+    if (!isMatched) return next(new ErrorHandler("Invalid Admin Key", 401));
+  
+    const token = jwt.sign(secretKey, process.env.JWT_SECRET);
+  
+    return res
+      .status(200)
+      .cookie("Chat-App-Admin", token, {
+        ...cookieOptions,
+        maxAge: 1000 * 60 * 15,
+      })
+      .json({
+        success: true,
+        message: "Authenticated Successfully, Welcome BOSS",
+      });
+
+});
+
 
 const allUsers = TryCatch(async (req, res, next) => {
   const users = await User.find({});
@@ -92,4 +119,55 @@ console.log(messages)
   });
 });
 
-export { allUsers, allChats, allMessages };
+const getDashboardStats = TryCatch(async (req, res) => {
+    const [groupsCount, usersCount, messagesCount, totalChatsCount] =
+      await Promise.all([
+        Chat.countDocuments({ groupChat: true }),
+        User.countDocuments(),
+        Message.countDocuments(),
+        Chat.countDocuments(),
+      ]);
+  
+    const today = new Date();
+  
+    const last7Days = new Date();
+    last7Days.setDate(last7Days.getDate() - 7);
+  
+    const last7DaysMessages = await Message.find({
+      createdAt: {
+        $gte: last7Days,
+        $lte: today,
+      },
+    }).select("createdAt");
+  
+    const messages = new Array(7).fill(0);
+    const dayInMiliseconds = 1000 * 60 * 60 * 24;
+  
+    last7DaysMessages.forEach((message) => {
+      const indexApprox =
+        (today.getTime() - message.createdAt.getTime()) / dayInMiliseconds;
+      const index = Math.floor(indexApprox);
+  
+      messages[6 - index]++;
+    });
+  
+    const stats = {
+      groupsCount,
+      usersCount,
+      messagesCount,
+      totalChatsCount,
+      messagesChart: messages,
+    };
+  
+    return res.status(200).json({
+      success: true,
+      stats,
+    });
+  });
+  
+
+
+export { allUsers, allChats, allMessages ,
+    getDashboardStats,
+    adminLogin
+};
