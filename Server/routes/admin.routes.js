@@ -1,5 +1,5 @@
 import express from "express";
-import { allUsers } from "../controllers/admin.controller.js";
+import { allChats, allMessages, allUsers } from "../controllers/admin.controller.js";
 
 const router = express.Router();
 
@@ -10,8 +10,8 @@ router.post("/verify")
 router.get("/logout")
 
 router.get("/users", allUsers)
-router.get("/chats")
-router.get("/messages")
+router.get("/chats", allChats)
+router.get("/messages",allMessages)
 
 router.get("/stats")
 
