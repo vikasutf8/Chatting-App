@@ -1,9 +1,9 @@
 
 import express from 'express';
-import { getMyProfile, login, logout, newUser, searchUser, sendFriendRequest, } from '../controllers/user.controller.js';
+import { acceptFriendRequest, getMyAllNotifications, getMyFriends, getMyProfile, login, logout, newUser, searchUser, sendFriendRequest, } from '../controllers/user.controller.js';
 import { singleAvatar } from '../middlewares/multer.js';
 import { isAuthenticated } from '../middlewares/auth.js';
-import { registerValidator, validateHandler ,loginValidator, sendRequestValidator } from '../lib/validators.js';
+import { registerValidator, validateHandler ,loginValidator, sendRequestValidator, acceptRequestValidator } from '../lib/validators.js';
 const router = express.Router();
 
 // registerValidator() is a middleware that validates the request body and return array
@@ -18,5 +18,7 @@ router.get("/logout",logout);
 router.get("/search",searchUser);
 
 router.put("/sendrequest",sendRequestValidator(),validateHandler, sendFriendRequest);
-
+router.put("/acceptrequest",acceptRequestValidator(),validateHandler, acceptFriendRequest);
+router.get("/notifications",getMyAllNotifications);
+router.get("/friends",getMyFriends);
 export default router;

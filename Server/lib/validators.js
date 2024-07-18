@@ -63,10 +63,18 @@ const removeGroupValidator = () => [
   body("name", "Please fill New Name"),
 ];
 const sendRequestValidator = () => [
-   
-    body("userId", "Please provide userId").notEmpty(),
-  ];
-  
+  body("userId", "Please provide userId").notEmpty(),
+];
+
+const acceptRequestValidator = () => [
+  body("requestId", "Please provide RequestId").notEmpty(),
+  body("accept")
+    .notEmpty()
+    .withMessage("Provide Acceptance")
+    .isBoolean()
+    .withMessage("Accept should be boolean"),
+];
+
 export {
   registerValidator,
   validateHandler,
@@ -77,5 +85,6 @@ export {
   sendAttachmentsValidator,
   chatIdValidor,
   removeGroupValidator,
-  sendRequestValidator
+  sendRequestValidator,
+  acceptRequestValidator,
 };
