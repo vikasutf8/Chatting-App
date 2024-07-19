@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import { v4 as uuid } from "uuid";
 import cors from "cors";
+import {v2 as cloudinary} from "cloudinary";
 
 import { errorMiddleware } from "./middlewares/error.js";
 import chatRoutes from "./routes/chat.routes.js";
@@ -21,7 +22,14 @@ dotenv.config({
 export const envMode = process.env.NODE_ENV.trim() || "PRODUCTION";
 const mongoURI = process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
+
 connectDB(mongoURI);
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
 export const adminSecretKey = process.env.ADMIN_SECRET_KEY || "Chat-App-Admin";
 export const userSocketIDs = new Map();
 // createUser(10);

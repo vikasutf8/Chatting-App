@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 import {
   Avatar,
   Button,
@@ -16,17 +17,16 @@ import { usernameValidator } from '../utils/validators';
 import axios from 'axios';
 import { server } from '../constants/config';
 import { useDispatch } from 'react-redux';
-import {toast} from 'react-hot-toast'
+import { userExists, userNotExists } from '../redux/reducer/auth';
+
+
 const Login = () => {
 
   const dispatch = useDispatch()
-
-
   const [isLogin, setIsLogin] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-  const toggleLogin = () => {
-    setIsLogin(prev => !prev)
-  }
+
+  const toggleLogin = () => { setIsLogin(prev => !prev) }
   const name = useInputValidation("")
   const bio = useInputValidation("")
   const username = useInputValidation("", usernameValidator)
@@ -34,22 +34,16 @@ const Login = () => {
 
   const avatar = useFileHandler("single")
 
-
-  const handleSignUp = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-  }
-  const handleLogin = async(e) => {
-    e.preventDefault()
-
     const config = {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
     };
-
     try {
-      const {data} =await axios.post(`${server}/api/v1/user/login`, {
+      const { data } = await axios.post(`${server}/user/login`, {
         username: username.value,
         password: password.value,
       },
@@ -59,233 +53,261 @@ const Login = () => {
       toast.success(data.message)
     } catch (error) {
       toast.error(error.response?.data?.message || "An error occurred login fetch")
-      
     }
-
   }
-    return (
-      <div
-        style={{
-          backgroundImage: 'linear-gradient(white, lightgray)',
+
+  const handleSignUp = async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData();
+    formData.append("avatar", avatar.file);
+    formData.append("name", name.value);
+    formData.append("bio", bio.value);
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+    console.log("formData", formData)
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/user/new`,
+        formData,
+        config
+      );
+      dispatch(userExists(data.user));
+      toast.success(data.message, {
+        // id: toastId,
+      });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "An error occurred sign up fetch")
+    }
+  }
+  return (
+    <div
+      style={{
+        backgroundImage: 'linear-gradient(white, lightgray)',
+      }}
+    >
+      <Container
+        component={"main"}
+        maxWidth="xs"
+        sx={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
-
       >
-
-
-        <Container
-          component={"main"}
-          maxWidth="xs"
+        <Paper
+          elevation={3}
           sx={{
-            height: "100vh",
+            padding: 4,
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <Paper
-            elevation={3}
-            sx={{
-              padding: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {isLogin ? (
-              <>
-                <Typography variant="h5">Login</Typography>
-                <form
-                  style={{
-                    width: "100%",
+          {isLogin ? (
+            <>
+              <Typography variant="h5">Login</Typography>
+              <form
+                style={{
+                  width: "100%",
+                  marginTop: "1rem",
+                }}
+                onSubmit={handleLogin}
+              >
+                <TextField
+                  required
+                  fullWidth
+                  label="Username"
+                  margin="normal"
+                  variant="outlined"
+                  value={username.value}
+                  onChange={username.changeHandler}
+                />
+
+                <TextField
+                  required
+                  fullWidth
+                  label="Password"
+                  type="password"
+                  margin="normal"
+                  variant="outlined"
+                  value={password.value}
+                  onChange={password.changeHandler}
+                />
+
+                <Button
+                  sx={{
                     marginTop: "1rem",
                   }}
-                  onSubmit={handleLogin}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  fullWidth
+                  disabled={isLoading}
                 >
-                  <TextField
-                    required
-                    fullWidth
-                    label="Username"
-                    margin="normal"
-                    variant="outlined"
-                    value={username.value}
-                    onChange={username.changeHandler}
-                  />
+                  Login
+                </Button>
 
-                  <TextField
-                    required
-                    fullWidth
-                    label="Password"
-                    type="password"
-                    margin="normal"
-                    variant="outlined"
-                    value={password.value}
-                    onChange={password.changeHandler}
-                  />
+                <Typography textAlign={"center"} m={"1rem"}>
+                  OR
+                </Typography>
 
-                  <Button
+                <Button
+                  disabled={isLoading}
+                  fullWidth
+                  variant="text"
+                  onClick={toggleLogin}
+                >
+                  Sign Up Instead
+                </Button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Typography variant="h5">Sign Up</Typography>
+              <form
+                style={{
+                  width: "100%",
+                  marginTop: "1rem",
+                }}
+                onSubmit={handleSignUp}
+              >
+                <Stack position={"relative"} width={"10rem"} margin={"auto"}>
+                  <Avatar
                     sx={{
-                      marginTop: "1rem",
+                      width: "10rem",
+                      height: "10rem",
+                      objectFit: "contain",
                     }}
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    fullWidth
-                    disabled={isLoading}
-                  >
-                    Login
-                  </Button>
+                    src={avatar.preview}
+                  />
 
-                  <Typography textAlign={"center"} m={"1rem"}>
-                    OR
+                  <IconButton
+                    sx={{
+                      position: "absolute",
+                      bottom: "0",
+                      right: "0",
+                      color: "white",
+                      bgcolor: "rgba(0,0,0,0.5)",
+                      ":hover": {
+                        bgcolor: "rgba(0,0,0,0.7)",
+                      },
+                    }}
+                    component="label"
+                  >
+                    <>
+                      <CameraAltIcon />
+                      <VisuallyHiddenInput
+                        type="file"
+                        onChange={avatar.changeHandler}
+                      />
+                    </>
+                  </IconButton>
+                </Stack>
+
+                {avatar.error && (
+                  <Typography
+                    m={"1rem auto"}
+                    width={"fit-content"}
+                    display={"block"}
+                    color="error"
+                    variant="caption"
+                  >
+                    {avatar.error}
                   </Typography>
+                )}
 
-                  <Button
-                    disabled={isLoading}
-                    fullWidth
-                    variant="text"
-                    onClick={toggleLogin}
-                  >
-                    Sign Up Instead
-                  </Button>
-                </form>
-              </>
-            ) : (
-              <>
-                <Typography variant="h5">Sign Up</Typography>
-                <form
-                  style={{
-                    width: "100%",
+                <TextField
+                  required
+                  fullWidth
+                  label="Name"
+                  margin="normal"
+                  variant="outlined"
+                  value={name.value}
+                  onChange={name.changeHandler}
+                />
+
+                <TextField
+                  required
+                  fullWidth
+                  label="Bio"
+                  margin="normal"
+                  variant="outlined"
+                  value={bio.value}
+                  onChange={bio.changeHandler}
+                />
+                <TextField
+                  required
+                  fullWidth
+                  label="Username"
+                  margin="normal"
+                  variant="outlined"
+                  value={username.value}
+                  onChange={username.changeHandler}
+                />
+
+                {username.error && (
+                  <Typography color="error" variant="caption">
+                    {username.error}
+                  </Typography>
+                )}
+
+                <TextField
+                  required
+                  fullWidth
+                  label="Password"
+                  type="password"
+                  margin="normal"
+                  variant="outlined"
+                  value={password.value}
+                  onChange={password.changeHandler}
+                />
+                {password.error && (
+                  <Typography color="error" variant="caption">
+                    {password.error}
+                  </Typography>
+                )}
+                <Button
+                  sx={{
                     marginTop: "1rem",
                   }}
-                  onSubmit={handleSignUp}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  fullWidth
+                  disabled={isLoading}
                 >
-                  <Stack position={"relative"} width={"10rem"} margin={"auto"}>
-                    <Avatar
-                      sx={{
-                        width: "10rem",
-                        height: "10rem",
-                        objectFit: "contain",
-                      }}
-                      src={avatar.preview}
-                    />
+                  Sign Up
+                </Button>
 
-                    <IconButton
-                      sx={{
-                        position: "absolute",
-                        bottom: "0",
-                        right: "0",
-                        color: "white",
-                        bgcolor: "rgba(0,0,0,0.5)",
-                        ":hover": {
-                          bgcolor: "rgba(0,0,0,0.7)",
-                        },
-                      }}
-                      component="label"
-                    >
-                      <>
-                        <CameraAltIcon />
-                        <VisuallyHiddenInput
-                          type="file"
-                          onChange={avatar.changeHandler}
-                        />
-                      </>
-                    </IconButton>
-                  </Stack>
+                <Typography textAlign={"center"} m={"1rem"}>
+                  OR
+                </Typography>
 
-                  {avatar.error && (
-                    <Typography
-                      m={"1rem auto"}
-                      width={"fit-content"}
-                      display={"block"}
-                      color="error"
-                      variant="caption"
-                    >
-                      {avatar.error}
-                    </Typography>
-                  )}
+                <Button
+                  disabled={isLoading}
+                  fullWidth
+                  variant="text"
+                  onClick={toggleLogin}
+                >
+                  Login Instead
+                </Button>
+              </form>
+            </>
+          )}
+        </Paper>
+      </Container>
+    </div>
+  )
+}
 
-                  <TextField
-                    required
-                    fullWidth
-                    label="Name"
-                    margin="normal"
-                    variant="outlined"
-                    value={name.value}
-                    onChange={name.changeHandler}
-                  />
-
-                  <TextField
-                    required
-                    fullWidth
-                    label="Bio"
-                    margin="normal"
-                    variant="outlined"
-                    value={bio.value}
-                    onChange={bio.changeHandler}
-                  />
-                  <TextField
-                    required
-                    fullWidth
-                    label="Username"
-                    margin="normal"
-                    variant="outlined"
-                    value={username.value}
-                    onChange={username.changeHandler}
-                  />
-
-                  {username.error && (
-                    <Typography color="error" variant="caption">
-                      {username.error}
-                    </Typography>
-                  )}
-
-                  <TextField
-                    required
-                    fullWidth
-                    label="Password"
-                    type="password"
-                    margin="normal"
-                    variant="outlined"
-                    value={password.value}
-                    onChange={password.changeHandler}
-                  />
-                  {password.error && (
-                    <Typography color="error" variant="caption">
-                      {password.error}
-                    </Typography>
-                  )}
-                  <Button
-                    sx={{
-                      marginTop: "1rem",
-                    }}
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    fullWidth
-                    disabled={isLoading}
-                  >
-                    Sign Up
-                  </Button>
-
-                  <Typography textAlign={"center"} m={"1rem"}>
-                    OR
-                  </Typography>
-
-                  <Button
-                    disabled={isLoading}
-                    fullWidth
-                    variant="text"
-                    onClick={toggleLogin}
-                  >
-                    Login Instead
-                  </Button>
-                </form>
-              </>
-            )}
-          </Paper>
-        </Container>
-      </div>
-    )
-  }
-
-  export default Login
+export default Login

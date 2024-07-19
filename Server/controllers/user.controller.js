@@ -3,7 +3,12 @@ import { TryCatch } from "../middlewares/error.js";
 import { User } from "../models/user.model.js";
 import { Chat } from "../models/chat.model.js";
 import { Request } from "../models/request.model.js";
-import { cookieOptions, emitEvent, sendToken } from "../utils/feature.js";
+import {
+  cookieOptions,
+  emitEvent,
+  sendToken,
+  uploadFilesToCloudinary,
+} from "../utils/feature.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
@@ -13,14 +18,11 @@ const newUser = TryCatch(async (req, res, next) => {
 
   const file = req.file;
   if (!file) return next(new ErrorHandler("Please Upload Avatar"));
-  // const result = await uploadFilesToCloudinary([file]);
-  // const avatar = {
-  //   public_id: result[0].public_id,
-  //   url: result[0].url,
-  // };
+  
+  const result = await uploadFilesToCloudinary([file]);
   const avatar = {
-    public_id: "public_id",
-    url: "url",
+    public_id: result[0].public_id,
+    url: result[0].url,
   };
 
   const user = await User.create({
@@ -195,7 +197,7 @@ const getMyFriends = TryCatch(async (req, res, next) => {
     groupChat: false,
   }).populate("members", "name avatar");
 
-  const friends = chats.map(({members}) => {
+  const friends = chats.map(({ members }) => {
     const otherUser = getOtherMember(members, req.user);
     return {
       _id: otherUser._id,
@@ -212,10 +214,9 @@ const getMyFriends = TryCatch(async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-       availableFriends,
+      availableFriends,
     });
-  } 
-  else {
+  } else {
     return res.status(200).json({
       success: true,
       friends,

@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { server } from './constants/config'
-import { userNotExists } from './redux/reducer/auth'
+import { userExists, userNotExists } from './redux/reducer/auth'
 
 const Home = lazy(() => import('./pages/Home'))
 const Login = lazy(() => import('./pages/Login'))
@@ -24,15 +24,19 @@ const MessageManagement = lazy(() => import('./pages/Admin/MessageManagement'))
 
 
 const App = () => {
-  const {user,loader} = useSelector(state => state.auth)
+  const { user, loader } = useSelector(state => state.auth)
   const dispatch = useDispatch()
-  useEffect(() => {
-    axios.get(`${server}/api/v1/user/me `) //getmyprofile
-      .then(res => console.log(res))
-      .catch(err => dispatch(userNotExists()))
-  }, [dispatch])
 
-  return loader ? (<LayoutLoader/>) :(
+  useEffect(() => {
+    // getmyprofile
+    axios.get(`${server}/user/me`, { withCredentials: true })
+      .then(({ data }) => dispatch(userExists(data.user)))
+      .catch(err => dispatch(userNotExists()))
+  },
+    [dispatch]
+  )
+
+  return loader ? (<LayoutLoader />) : (
     <Router>
       <Suspense fallback={<LayoutLoader />} >
         <Routes>
