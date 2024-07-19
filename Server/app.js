@@ -4,6 +4,8 @@ import express from "express";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import { v4 as uuid } from "uuid";
+import cors from "cors";
+
 import { errorMiddleware } from "./middlewares/error.js";
 import chatRoutes from "./routes/chat.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -31,6 +33,10 @@ const server = createServer(app);
 const io = new Server(server, {});
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: ["http://localhost:5173", "http://localhost:4173",process.env.CLIENT_URL],
+  credentials: true,
+}));
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chat", chatRoutes);
