@@ -1,10 +1,11 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 
 import {BrowserRouter as Router, Routes,Route } from 'react-router-dom'
 import ProtectRoute from './components/auth/ProtectRoute'
 import { LayoutLoader } from './components/layout/Loaders'
 // import AdminiLogin from './pages/Admin/AdminiLogin'
-
+import axios from 'axios'
+import { server } from './constants/config'
 
 
 const Home = lazy(() => import('./pages/Home'))
@@ -21,6 +22,18 @@ const MessageManagement = lazy(() => import('./pages/Admin/MessageManagement'))
 const user =true;
 
 const App = () => {
+
+
+  useEffect(()=>{
+  //  const fetchUser = async () => {
+  //    await axios.get(`${server}/api/v1/user/me `) //getmyprofile
+  //  };
+  //  fetchUser()
+  axios.get(`${server}/api/v1/user/me `) //getmyprofile
+    .then(res => console.log(res))
+    .catch(err => console.log(err))
+  },[])
+
   return (
     <Router>
       <Suspense fallback={<LayoutLoader/>} >

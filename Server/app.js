@@ -32,9 +32,9 @@ const io = new Server(server, {});
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/user", userRoutes);
-app.use("/chat", chatRoutes);
-app.use("/admin", adminRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/chat", chatRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send(`Server is running on http://localhost:${port} in ${envMode} mode`);
