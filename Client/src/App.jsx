@@ -1,9 +1,8 @@
 import { Suspense, lazy, useEffect } from 'react'
-
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import ProtectRoute from './components/auth/ProtectRoute'
 import { LayoutLoader } from './components/layout/Loaders'
-// import AdminiLogin from './pages/Admin/AdminiLogin'
+
 import axios from 'axios'
 import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,16 +20,18 @@ const UserManagement = lazy(() => import('./pages/Admin/UserManagement'))
 const ChatManagement = lazy(() => import('./pages/Admin/ChatManagement'))
 const MessageManagement = lazy(() => import('./pages/Admin/MessageManagement'))
 
-
-
 const App = () => {
   const { user, loader } = useSelector(state => state.auth)
   const dispatch = useDispatch()
 
   useEffect(() => {
     // getmyprofile
-    axios.get(`${server}/user/me`, { withCredentials: true })
-      .then(({ data }) => dispatch(userExists(data.user)))
+    axios.get(
+      `${server}/user/me`, 
+      { withCredentials: true })
+      .then(({ data }) => {
+        return dispatch(userExists(data))
+      })
       .catch(err => dispatch(userNotExists()))
   },
     [dispatch]

@@ -43,11 +43,13 @@ const Login = () => {
       },
     };
     try {
-      const { data } = await axios.post(`${server}/user/login`, {
+      const { data } = await axios.post(
+        `${server}/user/login`, 
+        {
         username: username.value,
         password: password.value,
-      },
-        config
+        },
+        config,
       )
       dispatch(userExists(true))
       toast.success(data.message)

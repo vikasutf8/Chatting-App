@@ -57,7 +57,7 @@ const getMyProfile = TryCatch(async (req, res, next) => {
   if (!Myprofile) return next(new ErrorHandler("User not found", 404));
   res.status(200).json({
     success: true,
-    data: req.user,
+    Myprofile,
   });
 });
 
@@ -92,7 +92,7 @@ const searchUser = TryCatch(async (req, res, next) => {
     name,
     avatar: avatar.url,
   }));
-
+  
   return res.status(200).json({
     success: true,
     message: name,

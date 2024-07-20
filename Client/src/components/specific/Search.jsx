@@ -1,37 +1,58 @@
-import { Dialog, DialogTitle, InputAdornment, List, Stack, TextField } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useInputValidation } from "6pp";
 import { Search as SearchIcon } from "@mui/icons-material";
-import UserItem from '../shared/UserItem';
-import { sampleUsers } from '../../constants/sampleData.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { setIsSearch } from '../../redux/reducer/misc.js';
-import { useLazySearchUserQuery } from '../../redux/api/api.js';
-import { useInputValidation } from '6pp';
-
+import {
+  Dialog,
+  DialogTitle,
+  InputAdornment,
+  List,
+  Stack,
+  TextField,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+// import { useAsyncMutation } from "../../hooks/hook";
+import {
+  useLazySearchUserQuery,
+  // useSendFriendRequestMutation,
+} from "../../redux/api/api";
+import { setIsSearch } from "../../redux/reducer/misc";
+import UserItem from "../shared/UserItem";
 
 const Search = () => {
-  const dispatch = useDispatch()
-  const search =useInputValidation("")
-  const { isSearch } = useSelector((state) =>(state.misc))
-  const [searchUser] = useLazySearchUserQuery()
-  const [users, setUsers] = useState([])
+  const { isSearch } = useSelector((state) => state.misc);
 
-  const addFriendHandler = (id) => { console.log(id) }
+  const [searchUser] = useLazySearchUserQuery();
+
+  // const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(
+  //   useSendFriendRequestMutation
+  // );
+
+  const dispatch = useDispatch();
+
+  const search = useInputValidation("");
+
+  const [users, setUsers] = useState([]);
   let isLoadingSendFriendRequest = false;
+  const addFriendHandler = async (id) => {
+    // await sendFriendRequest("Sending friend request...", { userId: id });
+  };
 
-  const searchCloseHandler = () => dispatch(setIsSearch(false))
-  console.log(users)
+  const searchCloseHandler = () => dispatch(setIsSearch(false));
   useEffect(() => {
-    const timeOutId= setTimeout(() => {
+    const timeOutId = setTimeout(() => {
+      
       searchUser(search.value)
-        .then(({data})=>{
-          return setUsers(data)
-          console.log(data)
+        .then(({ data }) => {
+          console.log(data.users)
+          return setUsers(data.users);
         })
-        .catch((error)=>console.log(" error in search user",error))
-    }, 1000)   
-    return () => clearTimeout(timeOutId)
-  }, [search.value])
+        .catch((e) => console.log(e));
+    }, 500);
+
+    return () => {
+      clearTimeout(timeOutId);
+    };
+  }, [search.value]);
 
   return (
     <Dialog open={isSearch} onClose={searchCloseHandler}>
@@ -51,6 +72,7 @@ const Search = () => {
             ),
           }}
         />
+
         <List>
           {users.map((i) => (
             <UserItem
@@ -63,8 +85,7 @@ const Search = () => {
         </List>
       </Stack>
     </Dialog>
+  );
+};
 
-  )
-}
-
-export default Search
+export default Search;
