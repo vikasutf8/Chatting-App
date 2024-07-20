@@ -5,7 +5,7 @@ const api = createApi({
   // endpoint exported as hooks
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: `${server}` }),
-    tagTypes: ["Chat"],
+    tagTypes: ["Chat","User"],
   endpoints: (builder) => ({
     // query ->get request || mutation -> post request invslidationtag
     myChat: builder.query({
@@ -15,8 +15,20 @@ const api = createApi({
       }),
       providesTags: ["Chat"],
     }),
+
+    searchUser: builder.query({
+      query: (name) => ({
+        url: `user/search?name=${name}`,
+        credentials: "include",
+      }),
+      providesTags: ["User"],
+
+    }),
+
   }),
 });
 
 export default api;
-export const { useMyChatQuery } = api;
+export const { useMyChatQuery ,
+  useLazySearchUserQuery,
+} = api;

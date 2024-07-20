@@ -2,38 +2,51 @@ import React, { Suspense, lazy, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { server } from '../../constants/config';
-
-import { AppBar, Backdrop, Box, Icon, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
-import { Menu as MenuIcon, Search as SearchIcon, Add as AddIcon, Group as GroupIcon,Logout as LogoutIcon, Notifications as NotificationsIcon } from '@mui/icons-material/'
+import {
+  AppBar,
+  Backdrop,
+  Box,
+  Icon,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  Typography
+} from '@mui/material'
+import {
+  Menu as MenuIcon,
+  Search as SearchIcon,
+  Add as AddIcon,
+  Group as GroupIcon,
+  Logout as LogoutIcon,
+  Notifications as NotificationsIcon
+} from '@mui/icons-material/'
 import { orange } from '../../constants/color'
 import toast from 'react-hot-toast'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { userNotExists } from '../../redux/reducer/auth'
-import { setIsMobile } from '../../redux/reducer/misc';
+import { setIsMobile, setIsSearch } from '../../redux/reducer/misc';
 
-const SearchDialog =lazy(() => import('../specific/Search'))
+const SearchDialog = lazy(() => import("../specific/Search"));
 const NewGroupsDialog = lazy(() => import('../specific/NewGroups'))
 const NotificationsDialog = lazy(() => import('../specific/Notifications'))
 
-
-
-
 const Header = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch()
-  
-  const [isSearch, setIsSearch] = useState(false)
+  const { isSearch } = useSelector((state) => state.misc)
+
   const [isNewGroup, setIsNewGroup] = useState(false)
   const [isNotification, setIsNotification] = useState(false)
-  const navigate = useNavigate();
-  const handleMobile = () => { dispatch(setIsMobile(true)) }
-  const openSearch = () => { setIsSearch(prev => !prev)}
-  const openNewGroup = () => { setIsNewGroup(prev => !prev)}
-  const openNotification = () => { setIsNotification(prev => !prev)}
-  const navigateToGroup = () => navigate("/groups")
-  const logoutHandler = async() => {
 
+  const handleMobile = () => { dispatch(setIsMobile(true)) }
+  const openSearch = () => { dispatch(setIsSearch(true)) }
+  const openNewGroup = () => { setIsNewGroup(prev => !prev) }
+  const openNotification = () => { setIsNotification(prev => !prev) }
+  const navigateToGroup = () => navigate("/groups")
+
+  const logoutHandler = async () => {
     try {
-      const {data} = await axios.get(`${server}/user/logout`,{
+      const { data } = await axios.get(`${server}/user/logout`, {
         withCredentials: true
       })
       dispatch(userNotExists())
@@ -42,8 +55,6 @@ const Header = () => {
       toast.error(error?.response?.data?.message || "An error occurred logout fetch")
     }
   }
-
-
   return (
     <>
       <Box sx={{ flexGrow: 1 }} height={"4rem"}>
@@ -52,10 +63,10 @@ const Header = () => {
         }}>
           <Toolbar>
             <Typography variant="h6"
-              sx={{ display: { xs: 'none', sm: 'block' },}}>
+              sx={{ display: { xs: 'none', sm: 'block' }, }}>
               Chatt App
             </Typography>
-            <Box sx={{ display: { xs: 'block', sm: 'none' },}}>  
+            <Box sx={{ display: { xs: 'block', sm: 'none' }, }}>
               <IconButton color="inherit" onClick={handleMobile}>
                 <MenuIcon />
               </IconButton>
@@ -75,24 +86,24 @@ const Header = () => {
       {
         isSearch && (
           <Suspense fallback={<Backdrop open />}>
-            <SearchDialog  />
+            <SearchDialog />
           </Suspense>
         )
-       } 
+      }
       {
         isNotification && (
           <Suspense fallback={<Backdrop open />}>
-            <NotificationsDialog  />
+            <NotificationsDialog />
           </Suspense>
         )
-       } 
-       {
+      }
+      {
         isNewGroup && (
           <Suspense fallback={<Backdrop open />}>
-            <NewGroupsDialog  />
+            <NewGroupsDialog />
           </Suspense>
         )
-       } 
+      }
     </>
   )
 }
