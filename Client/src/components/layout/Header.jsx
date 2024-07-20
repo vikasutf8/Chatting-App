@@ -9,6 +9,7 @@ import { orange } from '../../constants/color'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { userNotExists } from '../../redux/reducer/auth'
+import { setIsMobile } from '../../redux/reducer/misc';
 
 const SearchDialog =lazy(() => import('../specific/Search'))
 const NewGroupsDialog = lazy(() => import('../specific/NewGroups'))
@@ -19,12 +20,12 @@ const NotificationsDialog = lazy(() => import('../specific/Notifications'))
 
 const Header = () => {
   const dispatch = useDispatch()
-  const [ismobile , setIsMobile] = useState(false)
+  
   const [isSearch, setIsSearch] = useState(false)
   const [isNewGroup, setIsNewGroup] = useState(false)
   const [isNotification, setIsNotification] = useState(false)
   const navigate = useNavigate();
-  const handleMobile = () => { setIsMobile(prev => !prev) }
+  const handleMobile = () => { dispatch(setIsMobile(true)) }
   const openSearch = () => { setIsSearch(prev => !prev)}
   const openNewGroup = () => { setIsNewGroup(prev => !prev)}
   const openNotification = () => { setIsNotification(prev => !prev)}
