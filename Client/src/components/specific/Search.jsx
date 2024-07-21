@@ -13,26 +13,27 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {
   useLazySearchUserQuery,
+  useSendFriendRequestMutation,
 
 } from "../../redux/api/api";
 import { setIsSearch } from "../../redux/reducer/misc";
 import UserItem from "../shared/UserItem";
+import toast from "react-hot-toast";
+import { useAsyncMutation } from "../../hooks/hook";
 
 const Search = () => {
+  const dispatch = useDispatch();
+  const search = useInputValidation("");
   const { isSearch } = useSelector((state) => state.misc);
   const [searchUser] = useLazySearchUserQuery();
-
-  const dispatch = useDispatch();
-
-  const search = useInputValidation("");
-
+  const [sendFriendRequest,isLoadingSendFriendRequest] = useAsyncMutation(useSendFriendRequestMutation);
+  
   const [users, setUsers] = useState([]);
-  let isLoadingSendFriendRequest = false;
-  const addFriendHandler = async (id) => {
-    console.log("addFriendHandler", id);
-  };
 
   const searchCloseHandler = () => dispatch(setIsSearch(false));
+  const addFriendHandler = async (id) => {
+    await sendFriendRequest("Sending Friend Request...", { userId :id });
+  };
   useEffect(() => {
     const timeOutId = setTimeout(() => {
       searchUser(search.value)

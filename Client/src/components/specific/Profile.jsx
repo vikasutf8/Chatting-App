@@ -4,54 +4,53 @@ import {
     Face as FaceIcon,
     AlternateEmail as UserNameIcon,
     CalendarMonth as CalendarIcon,
+    CleanHands,
 } from '@mui/icons-material'
 import moment from 'moment'
+import { transformImage } from '../../lib/features'
 
-const Profile = () => {
-  return (
-    <Stack spacing={"2rem"} direction={"column"} alignItems={"center"} >
-       <Avatar
-       sx={{
-        width:200,
-        height:200,
-        objectFit:"contain",
-        marginBottom:"1rem",
-        border:"5px solid #fff",
-
-
-       }}/>
-        
-        <ProfileCard
-            heading={"Bio"}
-            text={"Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, quidem."}
-        />
-        <ProfileCard
-            heading={"Username"}
-            text={"VikasArya"}
-            Icon={<UserNameIcon/>}
-        />
-        <ProfileCard
-            heading={"Name"}
-            text={"Vikas Arya"}
-            Icon={<FaceIcon/>}
-        />
-        <ProfileCard
-            heading={"Joined"}
-            text={moment('2024-06-26T00:00:00.000Z').fromNow()}
-            Icon={<CalendarIcon/>}
-        />
-    </Stack>
-  )
+const Profile = ({ user }) => {
+    return (
+        <Stack spacing={"2rem"} direction={"column"} alignItems={"center"} >
+            <Avatar src={transformImage(user?.Myprofile?.avatar?.url)} alt={user?.Myprofile?.username}
+                sx={{
+                    width: 200,
+                    height: 200,
+                    objectFit: "contain",
+                    marginBottom: "1rem",
+                    border: "5px solid #fff",
+                }} />
+            <ProfileCard
+                heading={"Bio"}
+                text={user?.Myprofile?.bio}
+            />
+            <ProfileCard
+                heading={"Username"}
+                text={user?.Myprofile?.username}
+                Icon={<UserNameIcon />}
+            />
+            <ProfileCard
+                heading={"Name"}
+                text={user?.Myprofile?.name}
+                Icon={<FaceIcon />}
+            />
+            <ProfileCard
+                heading={"Joined"}
+                text={moment(user?.Myprofile?.createdAt).fromNow()}
+                Icon={<CalendarIcon />}
+            />
+        </Stack>
+    )
 }
 
-const ProfileCard = ({text,Icon,heading }) => (
+const ProfileCard = ({ text, Icon, heading }) => (
     <Stack
         direction={"row"}
         spacing={"1rem"}
         alignItems={"center"}
         justifyContent={"center"}
         color={"white"}
-        >
+    >
         {Icon && Icon}
 
         <Stack>
