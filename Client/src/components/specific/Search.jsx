@@ -10,22 +10,17 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { useAsyncMutation } from "../../hooks/hook";
+
 import {
   useLazySearchUserQuery,
-  // useSendFriendRequestMutation,
+
 } from "../../redux/api/api";
 import { setIsSearch } from "../../redux/reducer/misc";
 import UserItem from "../shared/UserItem";
 
 const Search = () => {
   const { isSearch } = useSelector((state) => state.misc);
-
   const [searchUser] = useLazySearchUserQuery();
-
-  // const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(
-  //   useSendFriendRequestMutation
-  // );
 
   const dispatch = useDispatch();
 
@@ -34,16 +29,14 @@ const Search = () => {
   const [users, setUsers] = useState([]);
   let isLoadingSendFriendRequest = false;
   const addFriendHandler = async (id) => {
-    // await sendFriendRequest("Sending friend request...", { userId: id });
+    console.log("addFriendHandler", id);
   };
 
   const searchCloseHandler = () => dispatch(setIsSearch(false));
   useEffect(() => {
     const timeOutId = setTimeout(() => {
-      
       searchUser(search.value)
         .then(({ data }) => {
-          console.log(data.users)
           return setUsers(data.users);
         })
         .catch((e) => console.log(e));
@@ -60,8 +53,8 @@ const Search = () => {
         <DialogTitle textAlign={"center"}>Find People</DialogTitle>
         <TextField
           label=""
-          // value={search.value}
-          // onChange={search.changeHandler}
+          value={search.value}
+          onChange={search.changeHandler}
           variant="outlined"
           size="small"
           InputProps={{
