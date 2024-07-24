@@ -10,12 +10,17 @@ import Profile from '../specific/Profile'
 import Header from './Header'
 import { setIsMobile } from '../../redux/reducer/misc'
 import { useErrors } from '../../hooks/hook'
+import { getSocket } from '../../lib/socket'
 
 const AppLayout = () => (WrappedComponent) => {
     return (props) => {
         const params = useParams()
         const chatId = params.chatId
         const dispatch = useDispatch()
+        const socket =getSocket();
+        // console.log("socket",socket)
+        // console.log(socket.id)
+
         const { isMobile } = useSelector((state) => state.misc)
         const { user } = useSelector((state) => state.auth)
 
