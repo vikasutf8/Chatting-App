@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useAsyncMutation, useErrors } from '../../hooks/hook'
 import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from '../../redux/api/api'
 import { setIsNotification } from '../../redux/reducer/misc'
+import toast from 'react-hot-toast'
 
 const Notifications = () => {
   const { isNotification } = useSelector((state) => state.misc);
@@ -12,14 +13,27 @@ const Notifications = () => {
 
   const { isLoading, data, error, isError } = useGetNotificationsQuery();
 
-  const [acceptRequest] = useAsyncMutation(useAcceptFriendRequestMutation);
+  const [acceptRequest] = useAcceptFriendRequestMutation()
 
   const friendRequestHandler = async ({ _id, accept }) => {
+    // dispatch(setIsNotification(false));
+    // await acceptRequest("Accepting...", { requestId: _id, accept });
     dispatch(setIsNotification(false));
-    await acceptRequest("Accepting...", { requestId: _id, accept });
+    try {
+      const res =await acceptRequest({ requestId: _id, accept });
+      if(res.data?.success){
+        toast.success(res.data.message)
+        console.log("use scoket io")
+      }else toast.error(res.data?.error || "An error occurred while accepting friend request")
+    } catch (error) {
+      toast.error( "An error occurred while accepting friend request")
+      console.log(error)
+    }
   };
 
   const closeHandler = () => dispatch(setIsNotification(false));
+
+  
 
   useErrors([{ error, isError }]);
   return (
