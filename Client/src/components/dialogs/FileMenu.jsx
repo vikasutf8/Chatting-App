@@ -1,7 +1,7 @@
 import { ListItemText, Menu, MenuItem, MenuList, Tooltip } from "@mui/material";
 import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsFileMenu, setUploadingLoader } from "../../redux/reducers/misc";
+import { setIsFileMenu, setUploadingLoader } from "../../redux/reducer/misc";
 import {
   AudioFile as AudioFileIcon,
   Image as ImageIcon,
@@ -47,6 +47,7 @@ const FileMenu = ({ anchorE1, chatId }) => {
       const myForm = new FormData();
 
       myForm.append("chatId", chatId);
+      // this files should be same as the key in the multer middleware
       files.forEach((file) => myForm.append("files", file));
 
       const res = await sendAttachments(myForm);

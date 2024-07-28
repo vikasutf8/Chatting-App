@@ -8,7 +8,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.model.js";
 import { Message } from "../models/message.model.js";
 import { User } from "../models/user.model.js";
-import { deleteFileFromCloudinary, emitEvent } from "../utils/feature.js";
+import { deleteFileFromCloudinary, emitEvent, uploadFilesToCloudinary } from "../utils/feature.js";
 import { ErrorHandler } from "../utils/utility.js";
 
 const newGroupChat = TryCatch(async (req, res, next) => {
@@ -232,12 +232,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("Please provide attachments", 400));
 
   //   Upload files cloudinary
-  const attachments = [
-    // {
-    //   public_id: "public_id",
-    //   url: "url",
-    // }
-  ];
+  const attachments = await uploadFilesToCloudinary(files)
 
   const messageForDB = {
     content: "",

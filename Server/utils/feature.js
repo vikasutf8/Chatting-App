@@ -53,16 +53,18 @@ const uploadFilesToCloudinary = async (files = []) => {
       );
     });
   });
-
+console.log("uploadPromises",uploadPromises);
+console.count("uploadPromises");
   try {
     const results = await Promise.all(uploadPromises);
-
+    console.log("results",results);
     const formattedResults = results.map((result) => {
       return {
         public_id: result.public_id,
         url: result.secure_url,
       };
     });   
+    console.log("formattedResults",formattedResults);
     return formattedResults;
   } catch (error) {
     throw new Error("Error uploading files to cloudinary  " + error.message);
@@ -70,8 +72,8 @@ const uploadFilesToCloudinary = async (files = []) => {
 };
 
 const deleteFileFromCloudinary = async (public_id) => {
-  // const result = await cloudinary.uploader.destroy(public_id);
-  // return result;
+  const result = await cloudinary.uploader.destroy(public_id);
+  return result;
 };
 
 export {
