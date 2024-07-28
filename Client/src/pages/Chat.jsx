@@ -8,15 +8,16 @@ import FileMenu from '../components/dialogs/FileMenu'
 import { sampleMessage } from '../constants/sampleData'
 import MessagaComponent from '../components/shared/MessagaComponent'
 import { getSocket } from '../lib/socket'
-import { NEW_MESSAGE
+import { CHAT_JOINED, NEW_MESSAGE
 
  } from '../constants/events'
 import { useChatDetailsQuery, useGetMessagesQuery } from '../redux/api/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useInfiniteScrollTop } from "6pp";
-import { useErrors } from '../hooks/hook'
+import { useErrors, useSocketEvents } from '../hooks/hook'
 import { setIsFileMenu } from '../redux/reducer/misc'
+import { removeNewMessagesAlert } from '../redux/reducer/chat'
 
 
 const Chat = ({ chatId ,user }) => {
@@ -31,9 +32,9 @@ const Chat = ({ chatId ,user }) => {
   const [page, setPage] = useState(1);
   const [fileMenuAnchor, setFileMenuAnchor] = useState(null);
 
-
   const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
   const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
+
   const errors = [
     { isError: chatDetails.isError, error: chatDetails.error },
     { isError: oldMessagesChunk.isError, error: oldMessagesChunk.error },
@@ -50,11 +51,11 @@ const Chat = ({ chatId ,user }) => {
 
   const members = chatDetails?.data?.chat?.members
 
+
   const handleFileOpen = (e) => {
     dispatch(setIsFileMenu(true))
     setFileMenuAnchor(e.currentTarget)
   }
-
   const submitHandler = (e) => {
     e.preventDefault()
     if (!message.trim()) return;
@@ -62,6 +63,31 @@ const Chat = ({ chatId ,user }) => {
     socket.emit(NEW_MESSAGE, { chatId, members, message })
     setMessage("")
   }
+
+  useEffect(() => {
+    socket.emit(CHAT_JOINED, { userId: user._id, members });
+    dispatch(removeNewMessagesAlert(chatId));
+
+    return () => {
+      setMessages([]);
+      setMessage("");
+      setOldMessages([]);
+      setPage(1);
+      socket.emit(CHAT_LEAVED, { userId: user._id, members });
+    };
+  }, [chatId]);
+
+  const newMessagesListener = useCallback(
+    (data) => {
+      if (data.chatId !== chatId) return;
+
+      setMessages((prev) => [...prev, data.message]);
+    },
+    [chatId]
+  );
+
+  const eventHandlers = {[NEW_MESSAGE]: newMessagesListener}
+  useSocketEvents(socket,eventHandlers)
   useErrors(errors);
 
   const allMessages = [...oldMessages, ...messages];
