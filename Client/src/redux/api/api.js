@@ -31,6 +31,19 @@ const api = createApi({
       }),
      keepUnusedDataFor: 0,
     }),
+
+    chatDetails: builder.query({
+      query: ({ chatId, populate = false }) => {
+        let url = `chat/${chatId}`;
+        if (populate) url += "?populate=true";
+
+        return {
+          url,
+          credentials: "include",
+        };
+      },
+      providesTags: ["Chat"],
+    }),
     
     sendFriendRequest: builder.mutation({
       query:(data) =>({
@@ -61,4 +74,5 @@ export const {
   useSendFriendRequestMutation,
   useGetNotificationsQuery,
   useAcceptFriendRequestMutation,
+  useChatDetailsQuery,
  } = api;

@@ -34,10 +34,7 @@ cloudinary.config({
 
 export const adminSecretKey = process.env.ADMIN_SECRET_KEY || "Chat-App-Admin";
 export const userSocketIDs = new Map();
-// createUser(10);
-// createSingleChats(10);
-// createGroupChats(10);
-// createMessagesInAChat("668fa8c74c8bd7ab68a7f0ec",50)
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -65,8 +62,9 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
   const user = socket.user;
+  // console.log(user)
   userSocketIDs.set(user._id.toString(), socket.id);
-  console.log(userSocketIDs);
+  // console.log(userSocketIDs);
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
     const messageForRealTime = {
@@ -79,29 +77,30 @@ io.on("connection", (socket) => {
       chat: chatId,
       createdAt: new Date().toISOString(),
     };
-
+    console.log("messageForRealTime", messageForRealTime);
     const messageForDB = {
       content: message,
       sender: user._id,
       chat: chatId,
     };
 
-    const membersSockets = getSockets(members);
-    io.to(membersSockets).emit(NEW_MESSAGE, {
+    console.log("message", messageForDB);
+
+    const membersSocket = getSockets(members);
+    io.to(membersSocket).emit(NEW_MESSAGE, {
       chatId,
       message: messageForRealTime,
     });
-    io.to(membersSockets).emit(NEW_MESSAGE_ALERT, {
+    io.to(membersSocket).emit(NEW_MESSAGE_ALERT, {
       chatId,
     });
 
     try {
       await Message.create(messageForDB);
+      console.log("first message saved to DB");
     } catch (error) {
       console.log("Error in saving message to DB", error);
     }
-
-    console.log(messageForRealTime);
   });
 
   /**
@@ -120,7 +119,6 @@ io.on("connection", (socket) => {
  
  
  */
-
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
     userSocketIDs.delete(user._id.toString());

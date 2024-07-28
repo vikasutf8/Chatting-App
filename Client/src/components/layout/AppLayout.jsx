@@ -81,7 +81,7 @@ const AppLayout = () => (WrappedComponent) => {
                     }
                 </Grid>
                 <Grid item xs={12} sm={8} md={5} lg={6} height={"100%"} >
-                    <WrappedComponent {...props} />
+                    <WrappedComponent {...props} chatId={chatId} />
                 </Grid>
                 <Grid item md={4} lg={3} sx={{
                     display: { xs: 'none', sm: 'block' },
