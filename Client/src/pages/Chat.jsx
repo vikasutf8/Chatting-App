@@ -8,36 +8,63 @@ import FileMenu from '../components/dialogs/FileMenu'
 import { sampleMessage } from '../constants/sampleData'
 import MessagaComponent from '../components/shared/MessagaComponent'
 import { getSocket } from '../lib/socket'
-import { NEW_MESSAGE } from '../constants/events'
-import { useChatDetailsQuery } from '../redux/api/api'
+import { NEW_MESSAGE
 
-const user = {
-  _id: "sdfsdfsdf",
-  name: "User",
+ } from '../constants/events'
+import { useChatDetailsQuery, useGetMessagesQuery } from '../redux/api/api'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { useInfiniteScrollTop } from "6pp";
+import { useErrors } from '../hooks/hook'
+import { setIsFileMenu } from '../redux/reducer/misc'
 
-}
 
-
-const Chat = ({ chatId }) => {
+const Chat = ({ chatId ,user }) => {
   const containerRef = useRef(null)
+  const bottomRef = useRef(null)
   const socket = getSocket()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()  
 
-  const [message, setMessage] = useState("")
-  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId })
-console.log("chatDetails",chatDetails)
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [fileMenuAnchor, setFileMenuAnchor] = useState(null);
+
+
+  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
+  const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
+  const errors = [
+    { isError: chatDetails.isError, error: chatDetails.error },
+    { isError: oldMessagesChunk.isError, error: oldMessagesChunk.error },
+  ];
+  
+  const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
+    containerRef,
+    oldMessagesChunk.data?.totalPages,
+    page,
+    setPage,
+    oldMessagesChunk.data?.messages
+  );
+
+
   const members = chatDetails?.data?.chat?.members
-  console.log(members)
-  console.log(chatDetails.data.chat)
+
+  const handleFileOpen = (e) => {
+    dispatch(setIsFileMenu(true))
+    setFileMenuAnchor(e.currentTarget)
+  }
 
   const submitHandler = (e) => {
     e.preventDefault()
     if (!message.trim()) return;
-
     // emmiting the message to the server
     socket.emit(NEW_MESSAGE, { chatId, members, message })
     setMessage("")
-
   }
+  useErrors(errors);
+
+  const allMessages = [...oldMessages, ...messages];
 
   return chatDetails.isLoading ? <Skeleton /> : (
     <Fragment>
@@ -61,7 +88,7 @@ console.log("chatDetails",chatDetails)
 
         <div ref={bottomRef} /> */}
         {
-          sampleMessage.map((message) => (
+          allMessages.map((message) => (
             <MessagaComponent key={message._id} message={message} user={user} />
           )
           )}
@@ -86,7 +113,7 @@ console.log("chatDetails",chatDetails)
               left: "1.5rem",
               rotate: "30deg",
             }}
-          // onClick={handleFileOpen}
+          onClick={handleFileOpen}
 
           >
             <AttachFileIcon />
@@ -116,7 +143,7 @@ console.log("chatDetails",chatDetails)
         </Stack>
       </form>
 
-      <FileMenu />
+      <FileMenu anchorE1={fileMenuAnchor} />
     </Fragment>
   )
 }
