@@ -1,0 +1,49 @@
+
+node_modules/
+.env
+
+# Ignore node_modules
+node_modules/
+
+# Logs
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment Variables
+.env
+
+# TypeScript Build Files
+dist/
+build/
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Debugger working directories
+.vscode-test/
+
+# Optional npm cache directory
+.npm/
+
+# Ignore testing coverage reports
+coverage/
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore compiled TypeScript declaration files
+*.d.ts

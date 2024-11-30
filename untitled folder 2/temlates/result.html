@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraping Results</title>
+</head>
+<body>
+    <h1>Scraping Results</h1>
+    <h2>Articles</h2>
+    <ul>
+        {% for article in articles %}
+            <li>
+                <strong>{{ article.title }}</strong><br>
+                <p>{{ article.summary }}</p>
+                <small>Published on: {{ article.date }} | <a href="{{ article.url }}">Read more</a></small>
+            </li>
+        {% endfor %}
+    </ul>
+    <h2>Monthly Article Counts</h2>
+    <p>{{ monthly_counts }}</p>
+    <h2>Most Common Words</h2>
+    <p>{{ common_words }}</p>
+    <a href="/">Go back</a>
+</body>
+</html>
