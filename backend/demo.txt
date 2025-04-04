@@ -1,0 +1,37 @@
+1. user register 
+2.  user login -- already 
+    2.1 :groiuping 
+
+3. user dashboard :
+4. show all users on dashboard
+    users=await User.find({_id:{
+        $nin:[req.session.user._id]
+     }})
+5. user can see who is online and offline(tab close or no internet) -IMPORTANT
+    offline :user logout, tab close or browser close ,system down, internet down
+    const io =require('socket.io')(http)
+    let usp =io.of('/user-namespace');
+    usp.on('connection,function(){
+         
+    })
+    userIdfrontend =  socket.handshake.auth.token
+    await User.findByIdAndUpdate({_id:userId},{
+        $set:{is_online:'1'};
+    })
+
+    socket.on('disconnect' ,async function(){
+        await User.findByIdAndUpdate({_id:userId},{
+        $set:{is_online:'0'};
+    })
+
+
+6. user can chat with all users -db save
+
+7. user can update your chats : editable chat\
+ 7.1 scrolling effect
+8. user can detlete you chat
+
+9. show chat notification to user
+
+
+
