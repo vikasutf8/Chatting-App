@@ -1,7 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors'; 
-import connectDB from 'config/db';
+import connectDB from './config/db';
+import userRoute from './routes/User.routes'
+import adminRoute from './routes/Admin.routes'
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -20,8 +22,8 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
-// app.use('/api/users', userRoutes);
-// app.use('/api/admins', adminRoutes);
+app.use('/api/users',userRoute );
+app.use('/api/admins', adminRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
