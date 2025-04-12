@@ -2,21 +2,32 @@ import { Component, signal } from '@angular/core';
 import { single } from 'rxjs';
 import { Product } from '../../models/product.model';
 import { ProductcardComponent } from "./productcard/productcard.component";
+import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-productlist',
-  imports: [ProductcardComponent],
+  imports: [ProductcardComponent,CommonModule],
   template: `
-    <div class="p-8 grid grid-cols-2 md:grid-cols-4  gap-4">
-      @for (product of products(); track product.id) {
-        <app-productcard [product]="product"/>
+   <ng-container *ngIf="products().length > 0; else loader">
+  <div class="p-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <app-productcard *ngFor="let product of products(); trackBy: trackById" [product]="product" />
+  </div>
+</ng-container>
 
-      }
-    </div>
+<ng-template #loader>
+  <h3>Welcome! Items loading...</h3>
+</ng-template>
+
+    
+    
   `,
   styles: ``
 })
 export class ProductlistComponent {
+  trackById(index: number, item: Product): number {
+    return item.id;
+  }
   products =signal<Product[]>([
     {
       "id": 1,

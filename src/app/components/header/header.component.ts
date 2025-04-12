@@ -1,18 +1,21 @@
 import { Component, inject, signal } from '@angular/core';
 import { PrimarybthComponent } from '../primarybth/primarybth.component';
 import { CartService } from '../../services/cart.service';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [PrimarybthComponent],
+  imports: [PrimarybthComponent,RouterLink],
   template: `
     <div class="bg-slate-300 px-4 py-3  shadow-2xl flex justify-between items-center">
-    <span>My Store</span>
+    <span routerLink="/">My Store</span>
     <app-primarybth 
     [label] ="'Cart(' + cartService.cart().length + ')'"
-    
+    routerLink="/cart"
     (btnClicked)="showButtonClicked()"
+    
     />
+    
     </div>
   `,
   styles: `
