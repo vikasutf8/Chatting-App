@@ -1,11 +1,7 @@
 <p>todo works at todo component !!!</p>
 
+<app-addtodo (todoAdd)="Addtodo($event)"></app-addtodo>
 <div *ngFor="let todo of todos">
-
-    <app-todo-item 
-    [todo]="todo"
-    (todoDelete)="deletetodo($event)"
-    >
-    </app-todo-item>
-    
+  <app-todo-item [todo]="todo" (todoDelete)="deletetodo($event)">
+  </app-todo-item>
 </div>

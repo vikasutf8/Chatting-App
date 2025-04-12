@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Todo } from '../../todos';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
 import { CommonModule } from '@angular/common';
+import { AddtodoComponent } from "../addtodo/addtodo.component";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-todo',
-  imports: [TodoItemComponent, CommonModule],
+  imports: [TodoItemComponent, CommonModule, AddtodoComponent,FormsModule],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.css'
 })
@@ -41,5 +43,10 @@ export class TodoComponent implements OnInit {
     console.log(todo)
     let index = this.todos.indexOf(todo)
     this.todos.splice(index,1)
+  }
+
+  Addtodo(todos :Todo){
+    console.log(todos)
+    this.todos.push(todos)
   }
 }
