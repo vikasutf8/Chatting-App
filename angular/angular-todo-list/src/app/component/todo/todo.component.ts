@@ -16,22 +16,20 @@ import { FormsModule } from '@angular/forms';
 
 export class TodoComponent implements OnInit {
   todos:Todo[]; //array of Todo as  reference class 
-
+  localItem :string |null;
   constructor(){
     this.todos =[
-     {
-      sno:3,
-      title:"testing 1",
-      desc :"afjasgkj",
-      active:true
-     },
-     {
-      sno:4,
-     title:"testing 4",
-     desc :"afjasgkj",
-     active:false
-     }
-    ]
+    ],
+    this.localItem =localStorage.getItem("todos")
+    if(this.localItem ==null){
+      this.todos=[]
+    }
+    else{
+      console.log(this.localItem)
+      this.todos =JSON.parse(this.localItem)
+      
+    }
+    
   }
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
@@ -43,10 +41,12 @@ export class TodoComponent implements OnInit {
     console.log(todo)
     let index = this.todos.indexOf(todo)
     this.todos.splice(index,1)
+    localStorage.setItem("todos",JSON.stringify(this.todos))
   }
 
   Addtodo(todos :Todo){
     console.log(todos)
     this.todos.push(todos)
+    localStorage.setItem("todos",JSON.stringify(this.todos))
   }
 }
