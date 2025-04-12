@@ -1,6 +1,7 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Product } from '../../../models/product.model';
 import { PrimarybthComponent } from "../../../components/primarybth/primarybth.component";
+import { CartService } from '../../../services/cart.service';
 
 @Component({
   selector: 'app-productcard',
@@ -11,7 +12,10 @@ import { PrimarybthComponent } from "../../../components/primarybth/primarybth.c
      <img [src]="product().image" class="w-[200px] h-[200px] "/>
      {{product().title}}
      <span class="text-gray-500">{{'$' +product().price}}</span>
-     <app-primarybth label="Add to card" class="flex justify-center"/>
+
+     <app-primarybth label="Add to card" class="flex justify-center"
+      (btnClicked)="cartService.addToCart(product())"
+     />
      </div>
      <span class="absolute top-3 right-3 text-sm">
       @if (product().stock ==0 ||  product().stock ==null) {
@@ -26,5 +30,8 @@ import { PrimarybthComponent } from "../../../components/primarybth/primarybth.c
   styles: ``
 })
 export class ProductcardComponent {
+
+  cartService =inject(CartService);
   product = input.required<Product>();
+
 }
