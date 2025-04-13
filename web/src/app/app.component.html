@@ -1,0 +1,22 @@
+<h1>Chat Application </h1>
+
+@if (!isJoined) {
+  <div>
+    <input type="text" placeholder="Enter Name" [(ngModel)]="name">
+    <button (click)="join()">Join</button>
+  </div>
+}
+@else {
+  <div>
+    <h3>{{name}}</h3>
+    <div>
+      <ul>
+        @for (item of messages; track $index) {
+          <li>{{item.name}} : {{item.chat}}</li>
+        }
+      </ul>
+    </div>
+    <input type="text" placeholder="Enter Message here..." [(ngModel)]="message">
+    <button (click)="send()">send</button>
+  </div>
+}
