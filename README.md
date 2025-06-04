@@ -20,3 +20,5 @@
 ## Server 
 
 - NodeJs Server on Express
+- Prisma : Postgres via NEON/Supabase::also integre later with mongodb for structureless schema
+- Supabase : create new project with prisma ORM `npx prisma init` and create schema them migrate `npx prisma migrate dev --name=users_table
